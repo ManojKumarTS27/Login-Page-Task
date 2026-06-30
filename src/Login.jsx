@@ -1,4 +1,5 @@
 import "./Login.css";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -22,6 +23,7 @@ const Login = () => {
         <div className="illustration">
           <div className="circle large"></div>
           <div className="circle small"></div>
+
           <div className="study-card">
             <span>AI</span>
             <p>Personalized Learning</p>
@@ -32,17 +34,28 @@ const Login = () => {
       <div className="login-right">
         <div className="login-card">
           <h2>Welcome Back</h2>
-          <p className="subtitle">Login to continue your learning journey</p>
+
+          <p className="subtitle">
+            Login to continue your learning journey
+          </p>
 
           <form>
             <div className="input-group">
               <label>Email Address</label>
-              <input type="email" placeholder="Enter your email" />
+
+              <input
+                type="email"
+                placeholder="Enter your email"
+              />
             </div>
 
             <div className="input-group">
               <label>Password</label>
-              <input type="password" placeholder="Enter your password" />
+
+              <input
+                type="password"
+                placeholder="Enter your password"
+              />
             </div>
 
             <div className="options">
@@ -54,13 +67,14 @@ const Login = () => {
               <a href="#">Forgot Password?</a>
             </div>
 
-            <button type="submit" className="login-btn">
+            <button className="login-btn">
               Login
             </button>
           </form>
 
           <p className="register-text">
-            Don&apos;t have an account? <a href="#">Register</a>
+            Don't have an account?{" "}
+            <Link to="/register">Register</Link>
           </p>
         </div>
       </div>

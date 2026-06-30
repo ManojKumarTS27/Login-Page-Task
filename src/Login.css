@@ -9,12 +9,14 @@
   min-height: 100vh;
   display: flex;
   background: white;
-  padding: 5px;
+  padding:30px;
 }
 
 .login-left {
   width: 55%;
-  padding: 60px;
+  padding: 50px;
+  height:96vh;
+  border-radius:28px;
   color: white;
   background: linear-gradient(135deg, #8b9fd6, #603aa2);
   position: relative;
@@ -87,7 +89,7 @@
 .study-card {
   position: absolute;
   width: 190px;
-  padding: 25px;
+  padding: 20px;
   background: white;
   color: #1e293b;
   border-radius: 24px;
@@ -100,7 +102,7 @@
 .study-card span {
   display: inline-block;
   background: #ede9fe;
-  color: violet;
+  color: #603aa2;
   font-size: 34px;
   font-weight: 800;
   padding: 15px 20px;
@@ -114,6 +116,7 @@
 
 .login-right {
   width: 45%;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,6 +180,7 @@
 
 .remember {
   display: flex;
+  align-items: center;
   gap: 8px;
   color: #475569;
 }
@@ -220,6 +224,7 @@
   .login-left,
   .login-right {
     width: 100%;
+    height: auto;
   }
 
   .login-left {
@@ -238,10 +243,56 @@
     position: relative;
     right: auto;
     bottom: auto;
-    margin-top: 40px;
+    margin: 40px auto 0;
   }
 
   .login-card {
     padding: 32px 25px;
   }
+}
+
+.error {
+  color: #eb2132;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.password-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #dcdfe6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.password-box input {
+  border: none;
+  outline: none;
+  flex: 1;
+}
+
+.password-box button {
+  border: none;
+  background: #f1f1f1;
+  padding: 13px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.strength {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.weak {
+  color: #e63946;
+}
+
+.medium {
+  color: #f4a261;
+}
+
+.strong {
+  color: #2a9d8f;
 }
