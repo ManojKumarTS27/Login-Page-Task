@@ -16,25 +16,38 @@ const Register = () => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
-  };
+  const [passwordStrength, setPasswordStrength] = useState("");
 
   const checkPasswordStrength = (password) => {
+    if (!password) return "";
+
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
     let score = 0;
 
     if (password.length >= 8) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[a-z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
+    if (hasUpperCase) score++;
+    if (hasLowerCase) score++;
+    if (hasNumber) score++;
+    if (hasSpecialChar) score++;
 
-    if (!password) return "";
     if (score <= 2) return "Weak";
     if (score <= 4) return "Medium";
     return "Strong";
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setForm({ ...form, [name]: value });
+    setErrors({ ...errors, [name]: "" });
+
+    if (name === "password") {
+      setPasswordStrength(checkPasswordStrength(value));
+    }
   };
 
   const validateForm = () => {
@@ -49,46 +62,54 @@ const Register = () => {
     }
 
     if (!form.email.trim()) {
-      newErrors.email = "Email address is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = "Enter a valid email address";
+      newErrors.email = "Email is required";
     }
 
     if (!form.password) {
       newErrors.password = "Password is required";
     } else if (form.password.length < 8) {
       newErrors.password = "Password must have minimum 8 characters";
-    } else if (!/[A-Z]/.test(form.password)) {
-      newErrors.password = "Password must contain one uppercase letter";
-    } else if (!/[a-z]/.test(form.password)) {
-      newErrors.password = "Password must contain one lowercase letter";
-    } else if (!/[0-9]/.test(form.password)) {
-      newErrors.password = "Password must contain one number";
-    } else if (!/[^A-Za-z0-9]/.test(form.password)) {
-      newErrors.password = "Password must contain one special character";
     }
 
     if (!form.confirmPassword) {
       newErrors.confirmPassword = "Confirm password is required";
     } else if (form.confirmPassword !== form.password) {
-      newErrors.confirmPassword = "Password and confirm password must match";
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      localStorage.setItem("user", JSON.stringify(form));
-      alert("Registration Successful!");
-      navigate("/login");
+    if (!validateForm()) return;
+
+    try {
+      const res = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      const data = await res.json();
+      alert(data.message);
+
+      if (res.ok) {
+        navigate("/login");
+      }
+    } catch (error) {
+      alert("Backend not connected");
     }
   };
-
-  const passwordStrength = checkPasswordStrength(form.password);
 
   return (
     <div className="login-page">
@@ -135,9 +156,7 @@ const Register = () => {
                 value={form.firstName}
                 onChange={handleChange}
               />
-              {errors.firstName && (
-                <p className="error">{errors.firstName}</p>
-              )}
+              {errors.firstName && <p className="error">{errors.firstName}</p>}
             </div>
 
             <div className="input-group">
@@ -149,9 +168,7 @@ const Register = () => {
                 value={form.lastName}
                 onChange={handleChange}
               />
-              {errors.lastName && (
-                <p className="error">{errors.lastName}</p>
-              )}
+              {errors.lastName && <p className="error">{errors.lastName}</p>}
             </div>
 
             <div className="input-group">
@@ -186,12 +203,8 @@ const Register = () => {
                 </button>
               </div>
 
-              {passwordStrength && (
-                <p
-                  className={`strength ${passwordStrength
-                    .toLowerCase()
-                    .trim()}`}
-                >
+              {form.password && (
+                <p className={`strength ${passwordStrength.toLowerCase()}`}>
                   Password Strength: {passwordStrength}
                 </p>
               )}

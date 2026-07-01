@@ -1,7 +1,42 @@
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-const Login = () => {
+const Forgotpassword = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+
+  const handleSendCode = async (e) => {
+    e.preventDefault();
+
+    if (!email.trim()) {
+      alert("Email is required");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(`${data.message}\nYour reset code is: ${data.resetCode}`);
+        navigate("/reset-password");
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Backend not connected");
+    }
+  };
+
   return (
     <div className="login-page">
       <div className="login-left">
@@ -33,47 +68,28 @@ const Login = () => {
 
       <div className="login-right">
         <div className="login-card">
-          <h2>Welcome Back</h2>
+          <h2>Forgot Password</h2>
 
-          <p className="subtitle">
-            Login to continue your learning journey
-          </p>
+          <p className="subtitle">Enter your email to receive reset code</p>
 
-          <form>
+          <form onSubmit={handleSendCode}>
             <div className="input-group">
               <label>Email Address</label>
-
               <input
                 type="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            <div className="input-group">
-              <label>Password</label>
-
-              <input
-                type="password"
-                placeholder="Enter your password"
-              />
-            </div>
-
-            <div className="options">
-              <label className="remember">
-                <input type="checkbox" />
-                Remember Me
-              </label>
-              <Link to="/forgot-password">Forgot Password?</Link>
-            </div>
-
-            <button className="login-btn">
-              Login
+            <button type="submit" className="login-btn">
+              Send Code
             </button>
           </form>
 
           <p className="register-text">
-            Don't have an account?{" "}
-            <Link to="/register">Register</Link>
+            Remember password? <Link to="/login">Login</Link>
           </p>
         </div>
       </div>
@@ -81,4 +97,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Forgotpassword;
